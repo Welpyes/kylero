@@ -1,0 +1,3 @@
+-keep class com.kylero.app.Chart* { *; }
+-keep class com.kylero.app.Note { *; }
+-dontwarn androidx.core.**

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kylero</string>
+    <string name="pick_file">Pick Chart (JSON)</string>
+    <string name="play">Play</string>
+    <string name="no_chart">No chart loaded</string>
+</resources>
