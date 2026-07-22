@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvStatus: TextView
 
     private var currentChart: Chart? = null
+    private var currentChartJson: String? = null
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -24,6 +25,14 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
         if (uri != null) loadChart(uri)
+    }
+
+    private val pickAudio = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        if (uri != null && currentChartJson != null) {
+            launchGame(uri)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,11 +53,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "No chart loaded", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            Toast.makeText(
-                this,
-                "Play: ${chart.meta.title} (${chart.notes.size} notes)",
-                Toast.LENGTH_SHORT
-            ).show()
+            pickAudio.launch(arrayOf("audio/*"))
         }
     }
 
@@ -59,6 +64,7 @@ class MainActivity : AppCompatActivity() {
 
             val chart = json.decodeFromString<Chart>(text)
             currentChart = chart
+            currentChartJson = text
 
             tvStatus.text = buildString {
                 appendLine("Loaded: ${chart.meta.title}")
@@ -71,5 +77,10 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Failed to parse chart: ${e.message}", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun launchGame(audioUri: Uri) {
+        val chartJson = currentChartJson ?: return
+        GameActivity.start(this, chartJson, audioUri)
     }
 }
